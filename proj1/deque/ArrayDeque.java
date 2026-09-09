@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> implements Iterable<T>{
+public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
     private T[] items;
     private int size;
 
@@ -18,26 +18,26 @@ public class ArrayDeque<T> implements Iterable<T>{
         lastNull = 0;
     }
 
+    @Override
     public int size() {
         return size;
     }
 
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
     private class ArrayDequeIterator implements Iterator<T> {
-        private int Pos;
+        private int index;
+        public ArrayDequeIterator() {
+            index = 0;
+        }
 
         @Override
         public boolean hasNext() {
-            return Pos < size;
+            return index < size;
         }
 
         @Override
         public T next() {
-            T returnItem = items[Pos];
-            Pos++;
+            T returnItem = items[(index + first) % items.length];
+            index++;
             return returnItem;
         }
     }
@@ -47,10 +47,34 @@ public class ArrayDeque<T> implements Iterable<T>{
         return new ArrayDequeIterator();
     }
 
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ArrayDeque<T> other = (ArrayDeque<T>) o;
+        if (this.size != other.size) {
+            return false;
+        }
+        for (int i = 0; i < size; i++) {
+            if (!this.items[(i + first) % items.length].equals(other.items[(i + other.first) % other.items.length])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void resize(int n) {
         T[] a = (T[]) new Object[n];
         if(first == 0) {
-            System.arraycopy(items, 0, a, 0, items.length);
+            if(items.length <= n) {
+                System.arraycopy(items, 0, a, 0, items.length);
+            }
+            else {
+                System.arraycopy(items, 0, a, 0, n);
+            }
         }
         else {
             System.arraycopy(items, first, a, 0, items.length - first);
@@ -61,6 +85,7 @@ public class ArrayDeque<T> implements Iterable<T>{
         lastNull = size;
     }
 
+    @Override
     public void addFirst(T item) {
         if (size == items.length) {
             resize(size * 2);
@@ -70,6 +95,7 @@ public class ArrayDeque<T> implements Iterable<T>{
         size++;
     }
 
+    @Override
     public void addLast(T item) {
         if (size == items.length) {
             resize(size * 2);
@@ -79,6 +105,7 @@ public class ArrayDeque<T> implements Iterable<T>{
         lastNull = (lastNull + 1) % items.length;
     }
 
+    @Override
     public T removeFirst() {
         if (size == 0) {
             System.out.println("ArrayDeque is empty");
@@ -95,6 +122,7 @@ public class ArrayDeque<T> implements Iterable<T>{
         return item;
     }
 
+    @Override
     public T removeLast() {
         // check empty
         if (size == 0) {
@@ -116,10 +144,19 @@ public class ArrayDeque<T> implements Iterable<T>{
         return item;
     }
 
+    @Override
     public T get(int index) {
         if (index >= size) {
             return null;
         }
         return items[(index + first) % items.length];
+    }
+
+    @Override
+    public void printDeque() {
+        for (T item : this) {
+            System.out.print(item + " ");
+        }
+        System.out.println();
     }
 }
