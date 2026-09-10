@@ -14,8 +14,13 @@ public class ArrayDequeTest {
         }
         adi.printDeque();
 
-        for(int i = 0; i < 24; i++) {
-            assertEquals((int) adi.removeLast(), 31 - i);
+        for(int i = 0; i < 32; i++) {
+            assertEquals((int) adi.removeFirst(), i);
+        }
+
+        for (int i = 0; i < 32; i++) {
+            adi.addFirst(i);
+            assertEquals((int) adi.removeFirst(), i);
         }
 
     }

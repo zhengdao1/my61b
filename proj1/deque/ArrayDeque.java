@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
+public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     private T[] items;
     private int size;
 
@@ -77,8 +77,13 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
             }
         }
         else {
-            System.arraycopy(items, first, a, 0, items.length - first);
-            System.arraycopy(items, 0, a, items.length - first, lastNull);
+            if(lastNull <= first) {
+                System.arraycopy(items, first, a, 0, items.length - first);
+                System.arraycopy(items, 0, a, items.length - first, lastNull);
+            }
+            else {
+                System.arraycopy(items, first, a, 0, lastNull - first);
+            }
         }
         items = a;
         first = 0;
